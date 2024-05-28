@@ -1,0 +1,32 @@
+5-whys-analysis-dashboard/
+├── public/
+│   ├── index.html
+│   └── ...
+├── src/
+│   ├── api/
+│   │   ├── serviceNowApi.js
+│   │   └── sharePointApi.js
+│   ├── components/
+│   │   ├── IncidentGrid.js
+│   │   ├── IncidentDetails.js
+│   │   ├── WhyAnalysis.js
+│   │   ├── LessonsLearned.js
+│   │   ├── ReportsPage.js
+│   │   ├── charts/
+│   │   │   ├── FlowChart.js
+│   │   │   └── IncidentChart.js
+│   ├── pages/
+│   │   ├── Dashboard.js
+│   │   ├── IncidentPage.js
+│   │   ├── ReportsPage.js
+│   ├── services/
+│   │   ├── incidentService.js
+│   ├── App.js
+│   ├── index.js
+│   ├── styles/
+│   │   ├── main.css
+│   │   └── ...
+│   └── utils/
+│       ├── apiUtils.js
+│       └── ...
+└── package.json
