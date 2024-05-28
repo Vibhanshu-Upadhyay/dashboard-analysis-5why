@@ -1,0 +1,40 @@
+Description of 5why analysis file-structure:
+
+public/
+Contains the static files and the main index.html.
+
+src/api/
+Contains files for making API calls to ServiceNow and SharePoint.
+
+serviceNowApi.js: Functions to fetch incident data from ServiceNow.
+sharePointApi.js: Functions to fetch incident data from SharePoint.
+src/components/
+Contains reusable components for the dashboard.
+
+IncidentGrid.js: Displays a grid of incidents.
+IncidentDetails.js: Displays details of a selected incident.
+WhyAnalysis.js: Component for entering and viewing 5 Why analysis.
+LessonsLearned.js: Component for documenting lessons learned.
+ReportsPage.js: Page to display reports.
+charts/FlowChart.js: Chart.js component for flow charts.
+charts/IncidentChart.js: Chart.js component for visualizing incident data.
+src/pages/
+Contains the main pages of the application.
+
+Dashboard.js: Main dashboard page.
+IncidentPage.js: Page to display and edit incident details.
+ReportsPage.js: Reports page for visualizing incident data.
+src/services/
+Contains business logic and service functions for managing incidents.
+
+incidentService.js: Functions for fetching, updating, and processing incident data.
+src/
+App.js: Main app component.
+index.js: Entry point of the React application.
+**styles
+/main.css: Styles for the application.
+
+src/utils/
+Contains utility functions.
+
+apiUtils.js: Utility functions for making API requests and handling responses.
