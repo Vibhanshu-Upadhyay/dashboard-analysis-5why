@@ -1,0 +1,102 @@
+import React, { useState } from 'react';
+
+const Grid = () => {
+  const [data, setData] = useState([]); // Data for the grid
+  const [searchTerm, setSearchTerm] = useState(''); // Global search term
+
+  // Function to handle sorting for each column
+  const handleSort = (column) => {
+    setData((prevData) => [...prevData].sort((a, b) => a[column].localeCompare(b[column])));
+  };
+
+  // Function to handle search within a specific column
+  const handleColumnSearch = (column, term) => {
+    setData((prevData) => prevData.filter((item) => item[column].toLowerCase().includes(term.toLowerCase())));
+  };
+
+  // Function to handle click on Issue Id (add data logic here)
+  const handleIssueIdClick = (id) => {
+    // Replace this with your logic to add data based on id
+    console.log(`Add data for Issue Id: ${id}`);
+  };
+
+  // Apply global search filter on data
+  const filteredData = data.filter((item) =>
+    Object.values(item)
+      .join(' ')
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase())
+  );
+
+  return (
+    <div>
+      <input
+        type="text"
+        placeholder="Search all..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+      />
+      <table className="grid">
+        <thead>
+          <tr>
+            <th>
+              Channel Name
+              <button onClick={() => handleSort('channelName')}>Sort</button>
+              <input
+                type="text"
+                placeholder="Search Channel Name"
+                onChange={(e) => handleColumnSearch('channelName', e.target.value)}
+              />
+            </th>
+            <th>
+              App Name
+              <button onClick={() => handleSort('appName')}>Sort</button>
+              <input
+                type="text"
+                placeholder="Search App Name"
+                onChange={(e) => handleColumnSearch('appName', e.target.value)}
+              />
+            </th>
+            <th>
+              Severity
+              <button onClick={() => handleSort('severity')}>Sort</button>
+              <input
+                type="text"
+                placeholder="Search Severity"
+                onChange={(e) => handleColumnSearch('severity', e.target.value)}
+              />
+            </th>
+            <th>
+              Lesson Learned
+              <button onClick={() => handleSort('lessonLearned')}>Sort</button>
+              <input
+                type="text"
+                placeholder="Search Lesson Learned"
+                onChange={(e) => handleColumnSearch('lessonLearned', e.target.value)}
+              />
+            </th>
+            <th>
+              Issue Id
+              <button onClick={() => handleSort('issueId')}>Sort</button>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {filteredData.map((item) => (
+            <tr key={item.issueId}>
+              <td>{item.channelName}</td>
+              <td>{item.appName}</td>
+              <td>{item.severity}</td>
+              <td>{item.lessonLearned}</td>
+              <td>
+                <button onClick={() => handleIssueIdClick(item.issueId)}>{item.issueId}</button>
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
+  );
+};
+
+export default Grid; 
