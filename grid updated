@@ -1,0 +1,354 @@
+import React, { useState, useMemo } from "react";
+import {
+  useTable,
+  useSortBy,
+  useGlobalFilter,
+  useFilters,
+  usePagination,
+} from "react-table";
+import "./App.css";
+
+const App = () => {
+  // State variables
+  const [showDialog, setShowDialog] = useState(false);
+  const [currentIssueId, setCurrentIssueId] = useState(null);
+
+  // Function to handle opening dialog box
+  const handleIssueIdClick = (id) => {
+    setShowDialog(true);
+    setCurrentIssueId(id);
+  };
+
+  // Initial sample data
+  const initialData = useMemo(
+    () => [
+      {
+        issueId: "1",
+        channelName: "Channel A",
+        appName: "App X",
+        severity: "High",
+        lessonLearned: "Lesson 1",
+      },
+      {
+        issueId: "2",
+        channelName: "Channel B",
+        appName: "App Y",
+        severity: "Medium",
+        lessonLearned: "Lesson 2",
+      },
+      {
+        issueId: "3",
+        channelName: "Channel C",
+        appName: "App Z",
+        severity: "Low",
+        lessonLearned: "Lesson 3",
+      },
+      {
+        issueId: "4",
+        channelName: "Channel D",
+        appName: "App A",
+        severity: "Critical",
+        lessonLearned: "Lesson 4",
+      },
+      // Add more data here...
+    ],
+    []
+  );
+
+  // Define columns
+  const columns = useMemo(
+    () => [
+      {
+        Header: "Channel Name",
+        accessor: "channelName",
+        Filter: ColumnFilter,
+        disableFilters: false,
+      },
+      {
+        Header: "App Name",
+        accessor: "appName",
+        Filter: ColumnFilter,
+        disableFilters: false,
+      },
+      {
+        Header: "Severity",
+        accessor: "severity",
+        Filter: ColumnFilter,
+        disableFilters: false,
+        Cell: ({ cell: { value } }) => {
+          const severityMapping = {
+            Low: { label: "1", color: "bg-green-100 text-green-800" },
+            Medium: { label: "2", color: "bg-yellow-100 text-yellow-800" },
+            High: { label: "3", color: "bg-orange-100 text-orange-800" },
+            Critical: { label: "4", color: "bg-red-100 text-red-800" },
+          };
+          return (
+            <span
+              className={`px-2 py-1 rounded ${severityMapping[value].color}`}
+            >
+              {severityMapping[value].label}
+            </span>
+          );
+        },
+      },
+      {
+        Header: "Issue Id",
+        accessor: "issueId",
+        disableSortBy: true, // Disable sorting for Issue Id
+        Cell: ({ cell: { value } }) => (
+          <button
+            onClick={() => handleIssueIdClick(value)}
+            className="text-blue-500 hover:underline"
+          >
+            {value}
+          </button>
+        ),
+      },
+    ],
+    []
+  );
+
+  // Column filter function
+  function ColumnFilter({ column: { filterValue, setFilter } }) {
+    return (
+      <input
+        value={filterValue || ""}
+        onChange={(e) => setFilter(e.target.value || undefined)}
+        placeholder={`Search...`}
+        className="p-2 border rounded"
+      />
+    );
+  }
+
+  // Dialog component
+  const Dialog = ({ onClose }) => {
+    // Dummy data
+    const dialogData = {
+      why1: "Reason 1",
+      why2: "Reason 2",
+      why3: "Reason 3",
+      why4: "Reason 4",
+      why5: "Reason 5",
+      channelName: "Channel A",
+      updatedBy: "John Doe",
+      appName: "App X",
+      severity: "High",
+      lessonLearned: "New Lesson",
+      issueId: currentIssueId,
+    };
+
+    return (
+      <div className="dialog">
+        <h2>Dialog Box</h2>
+        {/* Display dialog data */}
+        <div>
+          <p>Why1: {dialogData.why1}</p>
+          <p>Why2: {dialogData.why2}</p>
+          <p>Why3: {dialogData.why3}</p>
+          <p>Why4: {dialogData.why4}</p>
+          <p>Why5: {dialogData.why5}</p>
+          <p>Channel Name: {dialogData.channelName}</p>
+          <p>Updated By: {dialogData.updatedBy}</p>
+          <p>App Name: {dialogData.appName}</p>
+          <p>Severity: {dialogData.severity}</p>
+          <p>Lesson Learned: {dialogData.lessonLearned}</p>
+          <p>Issue ID: {dialogData.issueId}</p>
+        </div>
+        {/* Buttons */}
+        <div className="dialog-buttons">
+          <button onClick={() => onClose()}>Close</button>
+          <button>Update Data</button>
+          <button>Prev</button>
+          <button>Next</button>
+        </div>
+      </div>
+    );
+  };
+
+  // Use table hooks
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    page,
+    prepareRow,
+    state,
+    setGlobalFilter,
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
+    pageCount,
+    gotoPage,
+    nextPage,
+    previousPage,
+    setPageSize,
+  } = useTable(
+    {
+      columns,
+      data: initialData,
+      initialState: { pageIndex: 0 }, // Set initial page index to 0
+      defaultColumn: { Filter: ColumnFilter },
+    },
+    useFilters,
+    useGlobalFilter,
+    useSortBy,
+    usePagination
+  );
+
+  const { globalFilter, pageIndex, pageSize } = state;
+
+  return (
+    <div className="flex flex-col items-center w-full p-4">
+      {/* Refresh button */}
+      <button
+        onClick={() => window.location.reload()}
+        className="p-2 border rounded mb-4"
+      >
+        Refresh
+      </button>
+      {/* Search input */}
+      <input
+        value={globalFilter || ""}
+        onChange={(e) => setGlobalFilter(e.target.value || undefined)}
+        placeholder="Search all..."
+        className="p-2 border rounded w-1/2"
+      />
+      {/* Table */}
+      <table
+        {...getTableProps()}
+        className="w-4/5 mx-auto border-collapse border"
+      >
+        <thead>
+          {headerGroups.map((headerGroup) => (
+            <tr {...headerGroup.getHeaderGroupProps()}>
+              {headerGroup.headers.map((column) => (
+                <th
+                  {...column.getHeaderProps(column.getSortByToggleProps())}
+                  className="px-4 py-2 border text-left bg-gray-200"
+                >
+                  <div className="flex justify-between">
+                    <span>{column.render("Header")}</span>
+                    <span>
+                      {column.canSort ? (
+                        <button>
+                          {column.isSorted
+                            ? column.isSortedDesc
+                              ? " 🔽"
+                              : " 🔼"
+                            : " ⏺"}
+                        </button>
+                      ) : null}
+                    </span>
+                  </div>
+                  <div>{column.canFilter ? column.render("Filter") : null}</div>
+                </th>
+              ))}
+            </tr>
+          ))}
+        </thead>
+        <tbody {...getTableBodyProps()}>
+          {page.map((row) => {
+            prepareRow(row);
+            return (
+              <tr {...row.getRowProps()} className="even:bg-gray-100">
+                {row.cells.map((cell) => (
+                  <td {...cell.getCellProps()} className="px-4 py-2 border">
+                    {cell.render("Cell")}
+                  </td>
+                ))}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+      {/* Pagination */}
+      <div className="pagination flex items-center justify-center mt-4 space-x-2">
+        <button
+          onClick={() => gotoPage(0)}
+          disabled={!canPreviousPage}
+          className="px-2 py-1 border rounded disabled:opacity-50"
+        >
+          {"<<"}
+        </button>{" "}
+        <button
+          onClick={() => previousPage()}
+          disabled={!canPreviousPage}
+          className="px-2 py-1 border rounded disabled:opacity-50"
+        >
+          {"<"}
+        </button>{" "}
+        <button
+          onClick={() => nextPage()}
+          disabled={!canNextPage}
+          className="px-2 py-1 border rounded disabled:opacity-50"
+        >
+          {">"}
+        </button>{" "}
+        <button
+          onClick={() => gotoPage(pageCount - 1)}
+          disabled={!canNextPage}
+          className="px-2 py-1 border rounded disabled:opacity-50"
+        >
+          {">>"}
+        </button>{" "}
+        <span className="flex items-center">
+          Page{" "}
+          <strong>
+            {pageIndex + 1} of {pageOptions.length}
+          </strong>{" "}
+        </span>
+        <span className="flex items-center">
+          | Go to page:{" "}
+          <input
+            type="number"
+            defaultValue={pageIndex + 1}
+            onChange={(e) => {
+              const page = e.target.value ? Number(e.target.value) - 1 : 0;
+              gotoPage(page);
+            }}
+            className="p-1 border rounded w-12 text-center"
+          />
+        </span>{" "}
+        <select
+          value={pageSize}
+          onChange={(e) => {
+            setPageSize(Number(e.target.value));
+          }}
+          className="p-1 border rounded"
+        >
+          {[10, 20, 30, 40, 50].map((pageSize) => (
+            <option key={pageSize} value={pageSize}>
+              Show {pageSize}
+            </option>
+          ))}
+        </select>
+      </div>
+      {/* Severity Legend */}
+      <div className="mt-4 flex flex-col items-center">
+        <h3 className="text-lg font-bold mb-2">Severity Legend</h3>
+        <div className="flex space-x-4">
+          <div className="flex items-center">
+            <span className="inline-block w-4 h-4 bg-green-100 border rounded mr-2"></span>
+            <span>1 - Low</span>
+          </div>
+          <div className="flex items-center">
+            <span className="inline-block w-4 h-4 bg-yellow-100 border rounded mr-2"></span>
+            <span>2 - Medium</span>
+          </div>
+          <div className="flex items-center">
+            <span className="inline-block w-4 h-4 bg-orange-100 border rounded mr-2"></span>
+            <span>3 - High</span>
+          </div>
+          <div className="flex items-center">
+            <span className="inline-block w-4 h-4 bg-red-100 border rounded mr-2"></span>
+            <span>4 - Critical</span>
+          </div>
+        </div>
+      </div>
+      {/* Dialog box */}
+      {showDialog && <Dialog onClose={() => setShowDialog(false)} />}
+    </div>
+  );
+};
+
+export default App;
