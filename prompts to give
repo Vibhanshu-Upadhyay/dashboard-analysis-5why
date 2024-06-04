@@ -1,0 +1,5 @@
+Add these following functionalities:
+1) The Lesson Learned should be an input field which could be updated using the "update data" button and it will be shown on the grid.
+2) All other data should be input field too but they should be disabled.
+3) Make the next and prev button functional, clicking on next button will move you to the details of the next issue id and prev will move to the previous issue id.
+4) Make the entire dialog box a form and it should be shown on top of the grid with a higher z-index.
