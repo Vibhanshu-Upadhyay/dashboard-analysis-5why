@@ -1,0 +1,284 @@
+import React, { useState, useMemo } from "react";
+import {
+  useTable,
+  useSortBy,
+  useGlobalFilter,
+  useFilters,
+  usePagination,
+} from "react-table";
+import "./App.css";
+
+const App = () => {
+  // State variables
+  const [showForm, setShowForm] = useState(false);
+  const [currentIssueData, setCurrentIssueData] = useState(null);
+
+  // Function to handle opening form
+  const handleIssueIdClick = (issueData) => {
+    setShowForm(true);
+    setCurrentIssueData(issueData);
+  };
+
+  // Initial sample data
+  const initialData = useMemo(
+    () => [
+      {
+        issueId: "1",
+        channelName: "Channel A",
+        appName: "App X",
+        severity: "High",
+        lessonLearned: "Lesson 1",
+        why1: "Reason 1 for Issue 1",
+        why2: "Reason 2 for Issue 1",
+        why3: "Reason 3 for Issue 1",
+        why4: "Reason 4 for Issue 1",
+        why5: "Reason 5 for Issue 1",
+        updatedBy: "User A",
+      },
+      {
+        issueId: "2",
+        channelName: "Channel B",
+        appName: "App Y",
+        severity: "Medium",
+        lessonLearned: "Lesson 2",
+        why1: "Reason 1 for Issue 2",
+        why2: "Reason 2 for Issue 2",
+        why3: "Reason 3 for Issue 2",
+        why4: "Reason 4 for Issue 2",
+        why5: "Reason 5 for Issue 2",
+        updatedBy: "User B",
+      },
+      // Add more data here...
+    ],
+    []
+  );
+
+  // Define columns
+  const columns = useMemo(
+    () => [
+      {
+        Header: "Channel Name",
+        accessor: "channelName",
+        Filter: ColumnFilter,
+        disableFilters: false,
+      },
+      {
+        Header: "App Name",
+        accessor: "appName",
+        Filter: ColumnFilter,
+        disableFilters: false,
+      },
+      {
+        Header: "Severity",
+        accessor: "severity",
+        Filter: ColumnFilter,
+        disableFilters: false,
+        Cell: ({ cell: { value } }) => {
+          const severityMapping = {
+            Low: { label: "1", color: "bg-green-100 text-green-800" },
+            Medium: { label: "2", color: "bg-yellow-100 text-yellow-800" },
+            High: { label: "3", color: "bg-orange-100 text-orange-800" },
+            Critical: { label: "4", color: "bg-red-100 text-red-800" },
+          };
+          return (
+            <span
+              className={`px-2 py-1 rounded ${severityMapping[value].color}`}
+            >
+              {severityMapping[value].label}
+            </span>
+          );
+        },
+      },
+      {
+        Header: "Issue Id",
+        accessor: "issueId",
+        disableSortBy: true, // Disable sorting for Issue Id
+        Cell: ({ row }) => (
+          <button
+            onClick={() => handleIssueIdClick(row.original)}
+            className="text-blue-500 hover:underline"
+          >
+            {row.original.issueId}
+          </button>
+        ),
+      },
+    ],
+    []
+  );
+
+  // Column filter function
+  function ColumnFilter({ column: { filterValue, setFilter } }) {
+    return (
+      <input
+        value={filterValue || ""}
+        onChange={(e) => setFilter(e.target.value || undefined)}
+        placeholder={`Search...`}
+        className="p-2 border rounded"
+      />
+    );
+  }
+
+  // Form component
+  const IssueForm = ({ issueData, onClose }) => {
+    const [formData, setFormData] = useState({ ...issueData });
+
+    const handleChange = (e) => {
+      const { name, value } = e.target;
+      setFormData((prevData) => ({ ...prevData, [name]: value }));
+    };
+
+    const handleSubmit = (e) => {
+      e.preventDefault();
+      // Handle form submission logic
+      console.log("Updated data:", formData);
+      onClose();
+    };
+
+    return (
+      <div className="absolute top-0 left-0 w-full bg-white shadow-lg p-6 z-20">
+        <h2 className="text-xl mb-4">Edit Issue</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="mb-4">
+            <label className="block text-gray-700">Issue ID</label>
+            <input
+              type="text"
+              name="issueId"
+              value={formData.issueId}
+              className="mt-1 p-2 border w-full"
+              readOnly
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Channel Name</label>
+            <input
+              type="text"
+              name="channelName"
+              value={formData.channelName}
+              onChange={handleChange}
+              className="mt-1 p-2 border w-full"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">App Name</label>
+            <input
+              type="text"
+              name="appName"
+              value={formData.appName}
+              onChange={handleChange}
+              className="mt-1 p-2 border w-full"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Severity</label>
+            <select
+              name="severity"
+              value={formData.severity}
+              onChange={handleChange}
+              className="mt-1 p-2 border w-full"
+            >
+              <option value="Low">Low</option>
+              <option value="Medium">Medium</option>
+              <option value="High">High</option>
+              <option value="Critical">Critical</option>
+            </select>
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Lesson Learned</label>
+            <input
+              type="text"
+              name="lessonLearned"
+              value={formData.lessonLearned}
+              onChange={handleChange}
+              className="mt-1 p-2 border w-full"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Why 1</label>
+            <input
+              type="text"
+              name="why1"
+              value={formData.why1}
+              onChange={handleChange}
+              className="mt-1 p-2 border w-full"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Why 2</label>
+            <input
+              type="text"
+              name="why2"
+              value={formData.why2}
+              onChange={handleChange}
+              className="mt-1 p-2 border w-full"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Why 3</label>
+            <input
+              type="text"
+              name="why3"
+              value={formData.why3}
+              onChange={handleChange}
+              className="mt-1 p-2 border w-full"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Why 4</label>
+            <input
+              type="text"
+              name="why4"
+              value={formData.why4}
+              onChange={handleChange}
+              className="mt-1 p-2 border w-full"
+            />
+          </div>
+          <div className="mb-4">
+            <label className="block text-gray-700">Why 5</label>
+            <input
+              type="text"
+              name="why5"
+              value={formData.why5}
+              onChange={handleChange}
+              className="mt-1 p-2 border w-full"
+            />
+          </div>
+          <div className="flex justify-between">
+            <button
+              type="button"
+              className="bg-red-500 text-white px-4 py-2"
+              onClick={onClose}
+            >
+              Cancel
+            </button>
+            <button type="submit" className="bg-blue-500 text-white px-4 py-2">
+              Save
+            </button>
+          </div>
+        </form>
+      </div>
+    );
+  };
+
+  // Use table hooks
+  const {
+    getTableProps,
+    getTableBodyProps,
+    headerGroups,
+    page,
+    prepareRow,
+    state,
+    setGlobalFilter,
+    canPreviousPage,
+    canNextPage,
+    pageOptions,
+    pageCount,
+    gotoPage,
+    nextPage,
+    previousPage,
+    setPageSize,
+  } = useTable(
+    {
+      columns,
+      data: initialData,
+      initialState: { pageIndex: 0 }, // Set initial page index to 0
+      default
