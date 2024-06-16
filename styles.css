@@ -1,0 +1,8 @@
+/* src/styles.css */
+
+.chart-container {
+  position: relative;
+  width: 100%;
+  max-width: 1000px; /* Limit the max width of the chart */
+  margin: 0 auto; /* Center the chart */
+}
