@@ -3,3 +3,46 @@ Add these following functionalities:
 2) All other data should be input field too but they should be disabled.
 3) Make the next and prev button functional, clicking on next button will move you to the details of the next issue id and prev will move to the previous issue id.
 4) Make the entire dialog box a form and it should be shown on top of the grid with a higher z-index.
+
+
+// ProfileDropdown.jsx
+import React, { useState } from 'react';
+
+const ProfileDropdown = ({ username, onLogout }) => {
+  const [isOpen, setIsOpen] = useState(false);
+
+  const toggleDropdown = () => {
+    setIsOpen(!isOpen);
+  };
+
+  return (
+    <div className="relative inline-block text-left">
+      <div>
+        <button
+          onClick={toggleDropdown}
+          className="flex items-center justify-center w-12 h-12 text-white bg-blue-500 rounded-full focus:outline-none"
+        >
+          {username.charAt(0).toUpperCase()}
+        </button>
+      </div>
+      {isOpen && (
+        <div className="absolute right-0 w-48 mt-2 origin-top-right bg-white border border-gray-200 divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+          <div className="px-4 py-3">
+            <p className="text-sm">{username}</p>
+          </div>
+          <div className="py-1">
+            <button
+              onClick={onLogout}
+              className="w-full px-4 py-2 text-sm text-left text-red-600 hover:bg-red-50"
+            >
+              Logout
+            </button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default ProfileDropdown;
+
