@@ -49,14 +49,10 @@ const ChartComponent = ({ chartData, options, chartType }) => {
         return <Doughnut data={chartData} options={options} />;
       case "pie":
         return <Pie data={chartData} options={options} />;
-      case "scatter":
-        return <Scatter data={chartData} options={options} />;
       case "radar":
         return <Radar data={chartData} options={options} />;
       case "polarArea":
         return <PolarArea data={chartData} options={options} />;
-      case "bubble":
-        return <Bubble data={chartData} options={options} />;
       default:
         return <Pie data={chartData} options={options} />;
     }
