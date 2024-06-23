@@ -11,10 +11,10 @@ const Filters = ({
   setGroupBy,
 }) => {
   return (
-    <div className="flex justify-center space-x-4 mb-6">
-      <div className="relative">
+    <div className="flex flex-col justify-center space-y-4 mb-6">
+      <div className="relative max-w-[15vw]">
         <select
-          className="bg-white text-gray-700 py-3 px-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none"
+          className="w-full bg-white text-gray-700 py-3 px-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none"
           value={filterOptions.severity}
           onChange={(e) =>
             setFilterOptions({ ...filterOptions, severity: e.target.value })
@@ -26,9 +26,9 @@ const Filters = ({
           <option value="Low">Low</option>
         </select>
       </div>
-      <div className="relative">
+      <div className="relative max-w-[15vw]">
         <select
-          className="bg-white text-gray-700 py-3 px-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none"
+          className="w-full bg-white text-gray-700 py-3 px-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none"
           value={filterOptions.appName}
           onChange={(e) =>
             setFilterOptions({ ...filterOptions, appName: e.target.value })
@@ -42,9 +42,9 @@ const Filters = ({
           ))}
         </select>
       </div>
-      <div className="relative">
+      <div className="relative max-w-[15vw]">
         <select
-          className="bg-white text-gray-700 py-3 px-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none"
+          className="w-full bg-white text-gray-700 py-3 px-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none"
           value={filterOptions.channelName}
           onChange={(e) =>
             setFilterOptions({ ...filterOptions, channelName: e.target.value })
@@ -58,9 +58,9 @@ const Filters = ({
           ))}
         </select>
       </div>
-      <div className="relative">
+      <div className="relative max-w-[15vw]">
         <select
-          className="bg-white text-gray-700 py-3 px-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none"
+          className="w-full bg-white text-gray-700 py-3 px-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none"
           value={groupBy}
           onChange={(e) => setGroupBy(e.target.value)}
         >
@@ -70,7 +70,7 @@ const Filters = ({
         </select>
       </div>
       <button
-        className="bg-gray-300 text-gray-800 px-6 py-3 rounded-lg shadow-lg transition-transform transform hover:scale-105 focus:outline-none"
+        className="max-w-[15vw] bg-gray-300 text-gray-800 px-6 py-3 rounded-lg shadow-lg transition-transform transform hover:scale-105 focus:outline-none"
         onClick={resetFilters}
       >
         Reset Filters
