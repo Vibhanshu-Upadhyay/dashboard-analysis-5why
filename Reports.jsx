@@ -56,10 +56,21 @@ const Reports = () => {
     setFilteredData(filtered);
   };
 
-  const handleSearch = () => {
-    setShowVisualization(true);
+  //newly added
+  const handleFilterSearch = () => {
     filterData();
   };
+
+  //newly added
+  const handleVisualizationSearch = () => {
+    filterData();
+    setShowVisualization(true);
+  };
+
+  //   const handleSearch = () => {
+  //     setShowVisualization(true);
+  //     filterData();
+  //   };
 
   const getChartData = () => {
     const groupValues = filteredData.map((incident) => incident[groupBy]);
@@ -195,9 +206,11 @@ const Reports = () => {
         showEndDatePicker={showEndDatePicker}
         setShowStartDatePicker={setShowStartDatePicker}
         setShowEndDatePicker={setShowEndDatePicker}
-        handleSearch={handleSearch} // Pass handleSearch to DatePickers
+        // handleSearch={handleSearch} // Pass handleSearch to DatePickers
+        handleSearch={handleVisualizationSearch} //newly added
       />
       {error && <div className="text-red-500 text-center">{error}</div>}
+
       {showVisualization && (
         <div className="flex">
           <div>
@@ -243,6 +256,15 @@ const Reports = () => {
             groupBy={groupBy}
             setGroupBy={setGroupBy}
           />
+          {/* filter search button */}
+          <div className="flex justify-center mt-4">
+            <button
+              className="bg-blue-500 text-white py-2 px-4 rounded-lg"
+              onClick={handleFilterSearch}
+            >
+              Show Visualization
+            </button>
+          </div>
         </div>
       )}
       {modalData && (
