@@ -5,6 +5,7 @@ import initialData from "../Database";
 import DatePickers from "../Components/DatePickers";
 import Filters from "../Components/Filters";
 import Chart from "../Components/Chart";
+import Modal from "../Components/DrilldownModal";
 import "../styles.css"; // Import the CSS file
 
 const Reports = () => {
@@ -23,6 +24,8 @@ const Reports = () => {
   const [showVisualization, setShowVisualization] = useState(false); // New state
   const [error, setError] = useState(null); // New state for errors
   const [chartType, setChartType] = useState("pie"); // New state for chart type
+
+  const [modalData, setModalData] = useState(null); // New state for modal data
 
   const filterData = () => {
     if (!startDate || !endDate) {
@@ -140,12 +143,32 @@ const Reports = () => {
         );
         setSelectedSector(sectorValue);
         setFilteredData(incidentsInSector);
+        setModalData({
+          title: `Incidents in ${sectorValue}`,
+          data: incidentsInSector,
+        });
       } else {
         setSelectedSector(null);
         filterData();
       }
     },
   };
+  if (chartType === "radar" || chartType === "polarArea") {
+    options.scales = {
+      r: {
+        beginAtZero: true,
+      },
+    };
+  } else if (chartType === "bar" || chartType === "line") {
+    options.scales = {
+      x: {
+        beginAtZero: true,
+      },
+      y: {
+        beginAtZero: true,
+      },
+    };
+  }
 
   const resetFilters = () => {
     setFilterOptions({
@@ -154,6 +177,10 @@ const Reports = () => {
       channelName: "",
     });
     setGroupBy("appName");
+  };
+
+  const closeModal = () => {
+    setModalData(null);
   };
 
   return (
@@ -172,7 +199,42 @@ const Reports = () => {
       />
       {error && <div className="text-red-500 text-center">{error}</div>}
       {showVisualization && (
-        <>
+        <div className="flex">
+          <div>
+            {/* Different type of visualization */}
+            <div className="flex justify-center mt-4">
+              <select
+                className="bg-white text-gray-700 py-3 px-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none"
+                value={chartType}
+                onChange={(e) => setChartType(e.target.value)}
+              >
+                <option value="pie">Pie Chart</option>
+                <option value="bar">Bar Chart</option>
+                <option value="line">Line Chart</option>
+                <option value="doughnut">Doughnut Chart</option>
+                <option value="radar">Radar Chart</option>
+                <option value="polarArea">Polar Area Chart</option>
+              </select>
+            </div>
+            {groupBy && (
+              <div className="max-w-4xl mx-auto p-4 bg-white rounded-lg shadow-lg">
+                <h3 className="text-2xl font-semibold mb-4 text-center">
+                  {selectedSector
+                    ? `Incidents in ${selectedSector}`
+                    : `Incidents by ${
+                        groupBy.charAt(0).toUpperCase() + groupBy.slice(1)
+                      }`}
+                </h3>
+                <div className="chart-container">
+                  <Chart
+                    chartData={getChartData()}
+                    options={options}
+                    chartType={chartType}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
           <Filters
             filterOptions={filterOptions}
             setFilterOptions={setFilterOptions}
@@ -181,34 +243,14 @@ const Reports = () => {
             groupBy={groupBy}
             setGroupBy={setGroupBy}
           />
-          {/* Different type of visualization */}
-          <div className="flex justify-center mt-4">
-            <select
-              className="bg-white text-gray-700 py-3 px-4 border border-gray-300 rounded-lg shadow-sm focus:outline-none"
-              value={chartType}
-              onChange={(e) => setChartType(e.target.value)}
-            >
-              <option value="pie">Pie Chart</option>
-              <option value="bar">Bar Chart</option>
-              <option value="line">Line Chart</option>
-              <option value="doughnut">Doughnut Chart</option>
-            </select>
-          </div>
-          {groupBy && (
-            <div className="max-w-4xl mx-auto p-4 bg-white rounded-lg shadow-lg">
-              <h3 className="text-2xl font-semibold mb-4 text-center">
-                {selectedSector
-                  ? `Incidents in ${selectedSector}`
-                  : `Incidents by ${
-                      groupBy.charAt(0).toUpperCase() + groupBy.slice(1)
-                    }`}
-              </h3>
-              <div className="chart-container">
-                <Chart chartData={getChartData()} options={options} />
-              </div>
-            </div>
-          )}
-        </>
+        </div>
+      )}
+      {modalData && (
+        <Modal
+          title={modalData.title}
+          data={modalData.data}
+          closeModal={closeModal}
+        />
       )}
     </div>
   );
