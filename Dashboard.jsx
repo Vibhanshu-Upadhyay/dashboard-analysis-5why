@@ -1,11 +1,13 @@
 import React, { useState, useMemo } from "react";
 import { useTable, useSortBy, useFilters, usePagination } from "react-table";
 import initialData from "../Database";
+import { FaFilter } from "react-icons/fa";
 
 const Dashboard = () => {
   const [showDialog, setShowDialog] = useState(false);
   const [currentIssueId, setCurrentIssueId] = useState(null);
   const [columnFilters, setColumnFilters] = useState({});
+  const [filterDropdowns, setFilterDropdowns] = useState({});
 
   const handleIssueIdClick = (id) => {
     setShowDialog(true);
@@ -25,12 +27,18 @@ const Dashboard = () => {
 
   const handleToggleFilter = (columnId, value) => {
     setColumnFilters((prev) => {
-      const currentFilters = prev[columnId] || {};
-      currentFilters[value] = !currentFilters[value];
-      return {
-        ...prev,
-        [columnId]: currentFilters,
-      };
+      const currentFilters = { ...prev };
+      if (currentFilters[columnId] && currentFilters[columnId][value]) {
+        // If the value is already filtered, remove the filter and clear all for that column
+        delete currentFilters[columnId];
+      } else {
+        // Otherwise, add the filter
+        currentFilters[columnId] = {
+          ...currentFilters[columnId],
+          [value]: !currentFilters[columnId]?.[value],
+        };
+      }
+      return currentFilters;
     });
   };
 
@@ -48,13 +56,21 @@ const Dashboard = () => {
     return filteredData;
   };
 
+  const handleToggleDropdown = (columnId) => {
+    setFilterDropdowns((prev) => ({
+      ...prev,
+      [columnId]: !prev[columnId],
+    }));
+  };
+
   const columns = useMemo(
     () => [
       {
         Header: "Channel Name",
         accessor: "channelName",
-        Filter: ({ column: { id, preFilteredRows } }) => {
-          const [isOpen, setIsOpen] = useState(false);
+        Filter: ({
+          column: { filterValue, setFilter, id, preFilteredRows },
+        }) => {
           const uniqueValues = useMemo(() => {
             const values = new Set();
             preFilteredRows.forEach((row) => values.add(row.values[id]));
@@ -62,17 +78,30 @@ const Dashboard = () => {
           }, [preFilteredRows, id]);
 
           return (
-            <div>
-              <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="p-2 border rounded"
-              >
-                {isOpen ? "Hide Filters" : "Show Filters"}
-              </button>
-              {isOpen && (
-                <div className="mt-2">
+            <div className="relative">
+              <div className="flex items-center">
+                <input
+                  value={filterValue || ""}
+                  onChange={(e) => {
+                    setFilter(e.target.value || undefined);
+                  }}
+                  placeholder="Search..."
+                  className="p-2 border rounded mb-2 w-full"
+                />
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleToggleDropdown(id);
+                  }}
+                  className="p-2 border rounded mb-2 ml-2"
+                >
+                  <FaFilter />
+                </button>
+              </div>
+              {filterDropdowns[id] && (
+                <div className="absolute z-10 mt-2 bg-white border rounded shadow-lg">
                   {uniqueValues.map((value) => (
-                    <div key={value} className="flex items-center">
+                    <div key={value} className="flex items-center px-4 py-2">
                       <button
                         onClick={() => handleToggleFilter(id, value)}
                         className={`mr-2 ${
@@ -97,8 +126,9 @@ const Dashboard = () => {
       {
         Header: "App Name",
         accessor: "appName",
-        Filter: ({ column: { id, preFilteredRows } }) => {
-          const [isOpen, setIsOpen] = useState(false);
+        Filter: ({
+          column: { filterValue, setFilter, id, preFilteredRows },
+        }) => {
           const uniqueValues = useMemo(() => {
             const values = new Set();
             preFilteredRows.forEach((row) => values.add(row.values[id]));
@@ -106,17 +136,28 @@ const Dashboard = () => {
           }, [preFilteredRows, id]);
 
           return (
-            <div>
-              <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="p-2 border rounded"
-              >
-                {isOpen ? "Hide Filters" : "Show Filters"}
-              </button>
-              {isOpen && (
-                <div className="mt-2">
+            <div className="relative">
+              <div className="flex items-center">
+                <input
+                  value={filterValue || ""}
+                  onChange={(e) => setFilter(e.target.value || undefined)}
+                  placeholder="Search..."
+                  className="p-2 border rounded mb-2 w-full"
+                />
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleToggleDropdown(id);
+                  }}
+                  className="p-2 border rounded mb-2 ml-2"
+                >
+                  <FaFilter />
+                </button>
+              </div>
+              {filterDropdowns[id] && (
+                <div className="absolute z-10 mt-2 bg-white border rounded shadow-lg">
                   {uniqueValues.map((value) => (
-                    <div key={value} className="flex items-center">
+                    <div key={value} className="flex items-center px-4 py-2">
                       <button
                         onClick={() => handleToggleFilter(id, value)}
                         className={`mr-2 ${
@@ -141,8 +182,9 @@ const Dashboard = () => {
       {
         Header: "Severity",
         accessor: "severity",
-        Filter: ({ column: { id, preFilteredRows } }) => {
-          const [isOpen, setIsOpen] = useState(false);
+        Filter: ({
+          column: { filterValue, setFilter, id, preFilteredRows },
+        }) => {
           const uniqueValues = useMemo(() => {
             const values = new Set();
             preFilteredRows.forEach((row) => values.add(row.values[id]));
@@ -150,17 +192,28 @@ const Dashboard = () => {
           }, [preFilteredRows, id]);
 
           return (
-            <div>
-              <button
-                onClick={() => setIsOpen(!isOpen)}
-                className="p-2 border rounded"
-              >
-                {isOpen ? "Hide Filters" : "Show Filters"}
-              </button>
-              {isOpen && (
-                <div className="mt-2">
+            <div className="relative">
+              <div className="flex items-center">
+                <input
+                  value={filterValue || ""}
+                  onChange={(e) => setFilter(e.target.value || undefined)}
+                  placeholder="Search..."
+                  className="p-2 border rounded mb-2 w-full"
+                />
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleToggleDropdown(id);
+                  }}
+                  className="p-2 border rounded mb-2 ml-2"
+                >
+                  <FaFilter />
+                </button>
+              </div>
+              {filterDropdowns[id] && (
+                <div className="absolute z-10 mt-2 bg-white border rounded shadow-lg">
                   {uniqueValues.map((value) => (
-                    <div key={value} className="flex items-center">
+                    <div key={value} className="flex items-center px-4 py-2">
                       <button
                         onClick={() => handleToggleFilter(id, value)}
                         className={`mr-2 ${
@@ -211,7 +264,7 @@ const Dashboard = () => {
         ),
       },
     ],
-    [columnFilters]
+    [columnFilters, filterDropdowns]
   );
 
   const filteredData = useMemo(
@@ -250,32 +303,23 @@ const Dashboard = () => {
   const { globalFilter, pageIndex, pageSize } = state;
 
   return (
-    <div className="flex flex-col items-center w-full p-4">
-      <button
-        onClick={() => window.location.reload()}
-        className="p-2 border rounded mb-4"
-      >
-        Refresh
-      </button>
+    <div className="p-4">
       <input
         value={globalFilter || ""}
         onChange={(e) => setGlobalFilter(e.target.value || undefined)}
-        placeholder="Search all..."
-        className="p-2 border rounded w-1/2"
+        placeholder="Global Search..."
+        className="p-2 border rounded mb-4"
       />
-      <table
-        {...getTableProps()}
-        className="w-4/5 mx-auto border-collapse border"
-      >
+      <table {...getTableProps()} className="w-full border-collapse">
         <thead>
           {headerGroups.map((headerGroup) => (
             <tr {...headerGroup.getHeaderGroupProps()}>
               {headerGroup.headers.map((column) => (
                 <th
                   {...column.getHeaderProps(column.getSortByToggleProps())}
-                  className="px-4 py-2 border text-left bg-gray-200"
+                  className="px-4 py-2 border"
                 >
-                  <div className="flex justify-between">
+                  <div className="flex items-center justify-between">
                     <span>{column.render("Header")}</span>
                     <span>
                       {column.canSort ? (
