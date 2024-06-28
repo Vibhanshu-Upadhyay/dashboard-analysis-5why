@@ -84,3 +84,73 @@ const DatePickers = ({
 };
 
 export default DatePickers;
+
+
+import React from "react";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+
+const DatePickers = ({
+  startDate,
+  endDate,
+  setStartDate,
+  setEndDate,
+  handleSearch,
+}) => {
+  const [dateRange, setDateRange] = React.useState([null, null]);
+  const [showDatePicker, setShowDatePicker] = React.useState(false);
+
+  const onChange = (dates) => {
+    const [start, end] = dates;
+    setDateRange(dates);
+    setStartDate(start);
+    setEndDate(end);
+  };
+
+  return (
+    <div className="flex flex-col items-center space-y-4 mb-6">
+      <div className="relative">
+        <button
+          className="bg-blue-600 text-white px-6 py-3 rounded-lg shadow-lg transition-transform transform hover:scale-105 focus:outline-none"
+          onClick={() => setShowDatePicker(!showDatePicker)}
+        >
+          Select Date Range
+        </button>
+        {showDatePicker && (
+          <div className="absolute z-10 mt-2">
+            <DatePicker
+              selected={startDate}
+              onChange={onChange}
+              startDate={dateRange[0]}
+              endDate={dateRange[1]}
+              selectsRange
+              inline
+              className="rounded-lg shadow-lg"
+            />
+          </div>
+        )}
+      </div>
+      <div className="flex space-x-4">
+        {startDate && (
+          <div className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg shadow-lg">
+            Start Date: {startDate.toLocaleDateString()}
+          </div>
+        )}
+        {endDate && (
+          <div className="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg shadow-lg">
+            End Date: {endDate.toLocaleDateString()}
+          </div>
+        )}
+      </div>
+      <button
+        className="bg-green-600 text-white px-6 py-3 rounded-lg shadow-lg transition-transform transform hover:scale-105 focus:outline-none"
+        onClick={handleSearch}
+      >
+        Search
+      </button>
+    </div>
+  );
+};
+
+export default DatePickers;
+
