@@ -2,15 +2,21 @@
 
 import React, { useState, useEffect } from "react";
 import initialData from "../Database";
-import DatePickers from "../Components/DatePickers";
-import Filters from "../Components/Filters";
-import Chart from "../Components/Chart";
-import Modal from "../Components/DrilldownModal";
+import DatePickers from "../Components/dateTime/DatePickers";
+import Filters from "../Components/mainChart/Filters";
+import Chart from "../Components/mainChart/Chart";
+import Modal from "../Components/mainChart/DrilldownModal";
+import LineChart from "../Components/new_components/LineChart";
+import Cards from "../Components/new_components/Cards";
+import PieChart from "../Components/new_components/PieChart";
+import BarChart from "../Components/new_components/BarChart";
+import HeatMap from "../Components/new_components/HeatMap";
+
 import "../styles.css"; // Import the CSS file
 
 const Reports = () => {
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+  const [startDate, setStartDate] = useState(new Date("2024-01-01T00:00:00"));
+  const [endDate, setEndDate] = useState(new Date("2024-12-31T00:00:00"));
   const [filteredData, setFilteredData] = useState([]);
   const [showStartDatePicker, setShowStartDatePicker] = useState(false);
   const [showEndDatePicker, setShowEndDatePicker] = useState(false);
@@ -195,21 +201,36 @@ const Reports = () => {
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h2 className="text-3xl font-bold mb-6 text-center">Reports</h2>
-      <DatePickers
-        startDate={startDate}
-        endDate={endDate}
-        setStartDate={setStartDate}
-        setEndDate={setEndDate}
-        showStartDatePicker={showStartDatePicker}
-        showEndDatePicker={showEndDatePicker}
-        setShowStartDatePicker={setShowStartDatePicker}
-        setShowEndDatePicker={setShowEndDatePicker}
-        // handleSearch={handleSearch} // Pass handleSearch to DatePickers
-        handleSearch={handleVisualizationSearch} //newly added
-      />
+    <div className="mx-auto p-4">
+      <div className="flex w-full border-2 py-2 rounded-lg shadow-lg bg-white">
+        <h2 className="w-1/2 text-4xl font-bold text-center mt-2">
+          Reports Dashboard
+        </h2>
+        <DatePickers
+          startDate={startDate}
+          endDate={endDate}
+          setStartDate={setStartDate}
+          setEndDate={setEndDate}
+          showStartDatePicker={showStartDatePicker}
+          showEndDatePicker={showEndDatePicker}
+          setShowStartDatePicker={setShowStartDatePicker}
+          setShowEndDatePicker={setShowEndDatePicker}
+          // handleSearch={handleSearch} // Pass handleSearch to DatePickers
+          handleSearch={handleVisualizationSearch} //newly added
+        />
+      </div>
       {error && <div className="text-red-500 text-center">{error}</div>}
+
+      <div className="flex space-x-4">
+        <Cards />
+        <LineChart />
+      </div>
+
+      <div className="flex space-x-4">
+        <BarChart />
+        <PieChart />
+        <HeatMap />
+      </div>
 
       {showVisualization && (
         <div className="flex">
